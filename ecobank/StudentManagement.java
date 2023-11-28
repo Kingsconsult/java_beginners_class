@@ -23,7 +23,7 @@ public class StudentManagement {
         Scanner scanner = new Scanner(System.in);
         int choice;
         do {
-            System.out.println("What do you want to do?");
+            System.out.println("Select An Option \n1. Add a student \n2. Retrieve a student \n3. Edit A Student \n4. Get All Students \n5. Search For A Student \n6. Delete A Student");
 
             try {
                 choice = scanner.nextInt();
