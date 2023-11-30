@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
+// import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -17,22 +17,21 @@ public class StudentManagement {
     private static final String FILENAME = "ecobank_student.txt";
 
     public static void main(String[] args) {
-        loadStudentsFromTheDB();
-        // Student hardcodedStudent = new Student(1, "student name",
-        // "email@student.com");
-        // students.add(hardcodedStudent);
+      loadStudentsFromTheDB();
+
+
         Scanner scanner = new Scanner(System.in);
         int choice;
         do {
-            System.out.println("What do you want to do");
+            System.out.println("What do you want to do?");
+
             try {
                 choice = scanner.nextInt();
-                System.out.println("Your choice is " + choice);
+
             } catch (InputMismatchException e) {
-                System.out.println("What you provided is not correct");
+                System.out.println("Invalid choice");
                 scanner.nextLine();
                 choice = 7;
-                System.out.println("Your choice is " + choice);
                 continue;
             }
 
@@ -41,96 +40,166 @@ public class StudentManagement {
                     addAStudent(scanner);
                     break;
                 case 2:
-                    System.out.println("you want to retrieve a student");
+                    retrieveAStudent(scanner);
                     break;
                 case 3:
                     editAStudent(scanner);
                     break;
                 case 4:
-                    System.out.println("you want to delete a student");
-                    break;
+                    getAllStudents();
+                break;
+                case 5:
+                    search(scanner);
+                break;
+
+                case 6:
+                    deleteAStudent(scanner);
+                break;
+
                 case 0:
                     saveStudentToFile();
                 default:
-                    System.out.println("please type the number between 1 -3");
+                    // System.out.println("Please type the number between 1-4");
                     break;
             }
 
         } while (choice != 0);
-
         scanner.close();
+    }
 
+
+    private static void retrieveAStudent(Scanner scanner) {
+        System.out.println("Enter the students Id you want to retrieve"); 
+        long studentId = scanner.nextLong();
+
+        for (Student student : students) {
+            if (student.getId() == studentId) {
+                System.out.println("Student Id: " + student.getId());
+                System.out.println("Student Name: " + student.getName());
+                System.out.println("Student Email: " + student.getEmail());
+                return;
+            }
+        }
+    }
+
+    private static void deleteAStudent(Scanner scanner) {
+        System.out.println("Enter the students Id you want to delete");
+        long studentId = scanner.nextLong();
+
+        for (Student student : students) {
+            if (student.getId() == studentId) {
+                students.remove(student);
+                System.out.println("Student deleted successfully");
+                return;
+            }
+        }
     }
 
     private static void loadStudentsFromTheDB() {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(FILENAME))) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                String[] pieces = line.split(",");
-                long id = Long.parseLong(pieces[0].trim());
-                String name = pieces[1].trim();
-                String email = pieces[2].trim();
-
+                String[] studentDetails = line.split(",");
                 Student student = new Student();
-                student.setId(id);
-                student.setEmail(email);
-                student.setName(name);
-
+                student.setId(Long.parseLong(studentDetails[0].trim()));
+                student.setName(studentDetails[1].trim());
+                student.setEmail(studentDetails[2].trim());
                 students.add(student);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
+    private static void getAllStudents(){
+        int count = 1;
+       for(Student student: students){
+        System.out.println("Row " + count + "      id = " + student.id + "      Name = " + student.name + "     email = " + student.email);
+        count++;
+       }
+    }
+
+    private static void search(Scanner scanner){
+       List<Student> results = new ArrayList<>();
+        Long longInput ;
+        System.out.println("Enter your search input e.g id(2), name(Ifeanyi), email(ianyadike98@gmail.com)");
+        String input = scanner.next().trim();
+        try{
+         longInput = Long.parseLong(input);
+        }catch(NumberFormatException e){
+            longInput = -1L;
+        }
+
+        for (Student student : students) {
+            if (input.equals( student.getEmail().trim())) {
+                results.add(student);
+            }else if(input.equals(student.getName().trim()))
+            {
+                results.add(student);
+            }else if (longInput == student.getId()){
+                results.add(student);
+            }else{}
+        }
+
+
+        if(results.size() == 0){
+            System.out.println(input+ " =  Result was not found");
+        }
+
+        for (Student result : results) {
+            System.out.println(input + " =  id: " + result.id + "      Name: " + result.name + "     email " + result.email);
+        }
+
+    }
 
     private static void editAStudent(Scanner scanner) {
-        System.out.println("Enter the student Id you want to edit");
+        System.out.println("Enter the students Id you want to edit");
         long studentId = scanner.nextLong();
 
         for (Student student : students) {
             if (student.getId() == studentId) {
-                System.out.println("Enter the student name");
-                String studentName = scanner.next();
-                System.out.println("Enter the student Email");
-                String studentEmail = scanner.next();
-
-                student.setEmail(studentEmail);
-                student.setId(studentId);
-                student.setName(studentName);
-                System.out.println("The student information was updated successfully");
-
+                System.out.println("Enter the new name");
+                String newName = scanner.next();
+                student.setName(newName);
+                System.out.println("Enter the new email");
+                String newEmail = scanner.next();
+                student.setEmail(newEmail);
+                System.out.println("Student updated successfully");
+                return;
             }
         }
-
     }
 
     private static void addAStudent(Scanner scanner) {
-        System.out.println("Enter the student Id");
+        System.out.println("Enter student Id");
         long studentId = scanner.nextLong();
-        System.out.println("Enter the student name");
+        // scanner.nextLine();
+        System.out.println("Enter student name");
         String studentName = scanner.next();
-        System.out.println("Enter the student Email");
+        System.out.println("Enter student email");
         String studentEmail = scanner.next();
 
+        // Student student = new Student(studentId, studentName, studentEmail);
         Student student = new Student();
-        student.setEmail(studentEmail);
         student.setId(studentId);
         student.setName(studentName);
+        student.setEmail(studentEmail);
         students.add(student);
-        System.out.println("The student information was saved successfully");
+        System.out.println("Student added successfully");
+
     }
 
     private static void saveStudentToFile() {
-        try (FileWriter fileWriter = new FileWriter(FILENAME);
-                BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+        try (FileWriter filewriter = new FileWriter(FILENAME);
+                BufferedWriter bufferedWriter = new BufferedWriter(filewriter)) {
             for (Student student : students) {
                 bufferedWriter.write(student.getId() + "," + student.getName() + "," + student.getEmail());
                 bufferedWriter.newLine();
             }
-            System.out.println("Students information saved in the database");
+            System.out.println("Student information saved successfully");
         } catch (Exception e) {
-            System.out.println("error reading from the file");
+            System.out.println("Error writing to the file");
         }
+
     }
 
 }

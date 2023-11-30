@@ -2,16 +2,28 @@ package ecobank;
 
 public class Student {
     String name;
-    long Id;
+    long id;
     String email;
 
-    
-
-    // Student (long Id, String name, String email) {
-    //     this.Id = Id;
-    //     this.name = name;
-    //     this.email = email;
+    // Student (long Id, String Name, String Email) {
+    //     this.id = Id;
+    //     this.name = Name;
+    //     this.email = Email;
     // }
+
+    public long getId() {
+        return id;
+    }
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getName() {
         return this.name;
@@ -20,21 +32,4 @@ public class Student {
     public void setName(String name) {
         this.name = name;
     }
-
-    public long getId() {
-        return Id;
-    }
-
-    public void setId(long id) {
-        Id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
 }
